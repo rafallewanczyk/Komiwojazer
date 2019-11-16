@@ -1,7 +1,8 @@
 from pygraph.classes.undirected_graph import UndirectedGraph
-from pygraph.functions.searching.depth_first_search import depth_first_search
+from heapq import *
 
 visited = 10 * [0]
+
 
 def main():
     print("start")
@@ -17,8 +18,14 @@ def main():
     graph.new_edge(3, 8, 0)
     graph.new_edge(8, 9, 0)
 
-    #for v in graph.neighbors(2) : print(graph.nodes[v]['id'])
-    dfs(graph, 1)
+    heap = []
+    heappush(heap, 1)
+    heappush(heap, 3)
+    heappush(heap, 0)
+    heappush(heap, 8)
+    print(heap)
+    heappop(heap)
+    print(heap)
 
 def dfs(graph, start):
     visited[start] = 1
@@ -26,6 +33,14 @@ def dfs(graph, start):
         if visited[graph.nodes[v]['id']] == 0: dfs(graph, graph.nodes[v]['id'])
 
     print(start)
+
+
+def comp(a, b):
+    if a > b:
+        return True
+    else:
+        return False
+
 
 if __name__ == '__main__':
     main()
