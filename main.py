@@ -1,31 +1,28 @@
 from pygraph.classes.undirected_graph import UndirectedGraph
 from heapq import *
+from algorithms.astar import *
 
 visited = 10 * [0]
 
 
 def main():
-    print("start")
     graph = UndirectedGraph()
 
-    for i in range(1, 10): graph.new_node()
-    graph.new_edge(1, 2, 0)
-    graph.new_edge(2, 4, 0)
-    graph.new_edge(2, 5, 0)
-    graph.new_edge(5, 6, 0)
-    graph.new_edge(1, 3, 0)
-    graph.new_edge(3, 7, 0)
-    graph.new_edge(3, 8, 0)
-    graph.new_edge(8, 9, 0)
+    for i in range(1, 8): graph.new_node()
+    graph.new_edge(1, 2, 8)
+    graph.new_edge(1, 3, 4)
+    graph.new_edge(1, 4, 5)
+    graph.new_edge(2, 5, 4)
+    graph.new_edge(2, 7, 12)
+    graph.new_edge(3, 5, 8)
+    graph.new_edge(3, 7, 19)
+    graph.new_edge(3, 6, 9)
+    graph.new_edge(4, 7, 11)
+    graph.new_edge(4, 6, 7)
+    graph.new_edge(5, 7, 11)
+    graph.new_edge(6, 7, 7)
 
-    heap = []
-    heappush(heap, 1)
-    heappush(heap, 3)
-    heappush(heap, 0)
-    heappush(heap, 8)
-    print(heap)
-    heappop(heap)
-    print(heap)
+    print(astar(graph, 1, 7))
 
 def dfs(graph, start):
     visited[start] = 1
