@@ -1,6 +1,4 @@
 from heapq import *
-from pygraph.classes.undirected_graph import UndirectedGraph
-
 
 def heuristic(v1, v2):
     return 0
@@ -16,7 +14,7 @@ def astar(graph, start, end):
     while len(queue) > 0:
         current = heappop(queue)[1]
 
-        if current == end:
+        if current == end and len(current_cost) == graph.num_nodes:
             goal_reached = True
             break
 
@@ -41,3 +39,17 @@ def get_path(path, start, end):
     ret.append(start)
     ret.reverse()
     return ret
+
+def Hamilton(graph, start, visited, cost):
+    visited.append(start)
+    for vert in graph.neighbors(start):
+        if vert not in visited:
+            cost += graph.edge_cost(vert, start)
+            Hamilton(graph, vert, visited, cost)
+
+    if len(visited) == graph.num_nodes():
+        print("znalazlem siciezke!!")
+        print(visited, end = " ")
+        print(cost)
+
+    visited.pop()
