@@ -40,16 +40,3 @@ def get_path(path, start, end):
     ret.reverse()
     return ret
 
-def Hamilton(graph, start, visited, cost):
-    visited.append(start)
-    for vert in graph.neighbors(start):
-        if vert not in visited:
-            cost += graph.edge_cost(vert, start)
-            Hamilton(graph, vert, visited, cost)
-
-    if len(visited) == graph.num_nodes():
-        print("znalazlem siciezke!!")
-        print(visited, end = " ")
-        print(cost)
-
-    visited.pop()
