@@ -18,12 +18,13 @@ class Astar:
       self.search_space.nodes[id]['data'] = [start]
 
       queue = []
-      queue.append(id)
+      #queue.append(id)
+      heappush(queue, (0, start))
 
       while len(queue) > 0:
          print(queue)
 
-         id = queue.pop(0)
+         id = heappop(queue)[1]
          # print("biore %i'" %id, end=" ")
          print(f"biore {id} ")
          print(self.search_space.nodes[id]['data'])
@@ -34,10 +35,9 @@ class Astar:
             new = self.search_space.new_node()
             self.search_space.new_edge(new, id, graph.edge_cost(v, self.search_space.nodes[id]['data'][-1]))
             self.search_space.nodes[new]['data'] = self.search_space.nodes[id]['data']  + [v]
-            print(f"dodaje {i} ")
+            print(f"dodaje {v} ")
             print(self.search_space.nodes[new]['data'])
-            queue.append(new)
-
+            heappush(queue, (0, new))#ToDo
          print("___________________")
          #visited.append(queue.pop(0))
 
