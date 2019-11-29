@@ -18,8 +18,8 @@ class Astar:
         except ValueError:
             return 0
 
-    def heuristic(self, graph, path):
-        
+    def shortes_from_all_heuristic(self, graph, path):
+
         for i in self.l:
             if self.is_on_path(path, i[0], i[1]):
                 continue
@@ -27,13 +27,20 @@ class Astar:
                 return i[2] * (graph.number_of_nodes() - len(path))
         return 0
 
+    def greedy_heuristic(self, graph, path, v):
+        min = float("inf")
+        for i in graph.neighbors(v):
+            if graph.get_edge_data(v, i)['weight'] < min : min = graph.get_edge_data(v, i)['weight']
+        return min * (graph.number_of_nodes() - len(path))
+
+
     def solve(self, graph, start):
         self.l = sorted(graph.edges(data="weight"), key=lambda x: x[2])
         index = 1
         self.search_space.add_node(index)
         self.search_space.nodes[index]['path'] = [start]
         self.search_space.nodes[index]['cost'] = 0
-        self.search_space.nodes[index]['h'] = self.heuristic(graph, self.search_space.nodes[index]['path'])
+        self.search_space.nodes[index]['h'] = 0
 
         queue = []
         heappush(queue, (self.search_space.nodes[index]['h'] + self.search_space.nodes[index]['cost'], index))
@@ -41,17 +48,18 @@ class Astar:
 
         while len(queue) > 0:
             current = heappop(queue)[1]
+            current_node = self.search_space.nodes[current]
+            if len(current_node['path']) == graph.number_of_nodes():
+                print(
+                    f"{current_node['path']} koszt : {current_node['cost']} odwiedzone {self.visited_states}")
+                return (current_node['path'], current_node['cost'])
 
             last_on_path = self.search_space.nodes[current]['path'][-1]
             for v in list(graph.neighbors(last_on_path)):
-                current_node = self.search_space.nodes[current]
-                if len(current_node['path']) == graph.number_of_nodes():
-                    print(
-                        f"{current_node['path']} koszt : {current_node['cost']} odwiedzone {self.visited_states}")
-                    return (current_node['path'], current_node['cost'])
 
                 if v in current_node['path']:
                     continue
+
                 self.visited_states += 1
                 if self.visited_states % 100000 == 0:  print(self.visited_states)
                 self.search_space.add_node(index)
@@ -65,8 +73,7 @@ class Astar:
                                            weight=graph.get_edge_data(v, last_on_path)['weight'])
 
                 new_node['cost'] = current_node['cost'] + \
-                                                       graph.get_edge_data(v, last_on_path)['weight']
-                new_node['h'] = self.heuristic(graph, self.search_space.nodes[new]['path'])
+                                   graph.get_edge_data(v, last_on_path)['weight']
+                new_node['h'] = self.shortest_from_all_heuristic(graph, self.search_space.nodes[new]['path'])
 
                 heappush(queue, (new_node['h'] + new_node['cost'], new))
-
