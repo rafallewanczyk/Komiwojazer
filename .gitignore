@@ -197,4 +197,6 @@ dmypy.json
 /venv
 /.idea
 .vscode
+
+results.txt
 # End of https://www.gitignore.io/api/python,pycharm

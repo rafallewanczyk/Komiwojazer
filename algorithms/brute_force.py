@@ -1,7 +1,7 @@
 class BruteForce:
     final_cost = float("inf")
-    result = list()
-    visited = list()
+    result = []
+    visited = []
     visited_states = 0
 
     def brute(self, graph, start, cost = 0):
@@ -17,10 +17,7 @@ class BruteForce:
                 self.result = self.visited.copy()
         self.visited.pop()
 
-    def run(self, graph, start, cost = 0):
+    def solve(self, graph, start, cost = 0):
        self.brute(graph, start)
-       print(self.result)
-       print(self.final_cost)
-       print(f"odwiedzone stany {self.visited_states}")
-       print("end of brute force ")
-       return cost
+       
+       return self.result, self.final_cost, self.visited_states

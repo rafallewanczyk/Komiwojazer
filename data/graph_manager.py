@@ -40,7 +40,13 @@ class GraphManager():
             
         return posistion_dict
 
-    
+    def nodes_path_to_edges(self, path):
+        edges_path = []
+        prev = path[0]
+        for node in path[1:]:
+            edges_path.append((prev, node))
+            prev = node
+        return edges_path
 
 
 
