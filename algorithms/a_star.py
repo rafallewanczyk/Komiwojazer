@@ -7,11 +7,9 @@ class Astar:
    result = []
    
 
-   def heuristic(self, v1, v2):
+   def heuristic(self, graph, v1, v2):
+      #print(sorted(list(graph.get_all_edge_objects()), key = lambda x : x['cost']))
       return 0
-
-   
-
 
    def generate_search_space(self, graph, start):
       id = self.search_space.new_node()
@@ -25,20 +23,19 @@ class Astar:
          print(queue)
 
          id = heappop(queue)[1]
-         print("biore %i'" %id, end=" ")
-         print(f"biore {id} ")
+         print(f"biore {id}' ")
          print(self.search_space.nodes[id]['data']['path'])
          for v in graph.neighbors(self.search_space.nodes[id]['data']['path'][-1]):
             if v in self.search_space.nodes[id]['data']['path']:
                continue
 
             new = self.search_space.new_node()
-            self.search_space.new_edge(new, id, graph.edge_cost(v, self.search_space.nodes[id]['data']['path'][-1]))
+            self.search_space.new_edge(new, id, graph.edge_cost(v, self.search_space.nodes[id]['data']['path'][-1]) + self.heuristic(graph, new, id))
             self.search_space.nodes[new]['data']['path'] = self.search_space.nodes[id]['data']['path']  + [v]
             self.search_space.nodes[new]['data']['cost'] = self.search_space.nodes[id]['data']['cost'] + graph.edge_cost(v, self.search_space.nodes[id]['data']['path'][-1])
             print(f"dodaje {v} ")
             print(self.search_space.nodes[new]['data']['path'])
-            heappush(queue, (0, new))#ToDo
+            heappush(queue, (self.search_space.nodes[new]['data']['cost'], new))
          print("___________________")
          #visited.append(queue.pop(0))
 
