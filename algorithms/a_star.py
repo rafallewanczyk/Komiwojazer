@@ -5,9 +5,8 @@ from heapq import *
 
 class Astar:
     search_space = net.Graph()
-    final_cost = 0
-    result = []
     visited_states = 1
+    l = []
 
     def is_on_path(self, path, v1, v2):
         try:
@@ -20,8 +19,8 @@ class Astar:
             return 0
 
     def heuristic(self, graph, path):
-        l = sorted(graph.edges(data="weight"), key=lambda x: x[2])
-        for i in l:
+        
+        for i in self.l:
             if self.is_on_path(path, i[0], i[1]):
                 continue
             else:
@@ -29,6 +28,7 @@ class Astar:
         return 0
 
     def solve(self, graph, start):
+        self.l = sorted(graph.edges(data="weight"), key=lambda x: x[2])
         index = 1
         self.search_space.add_node(index)
         self.search_space.nodes[index]['path'] = [start]
@@ -44,28 +44,29 @@ class Astar:
 
             last_on_path = self.search_space.nodes[current]['path'][-1]
             for v in list(graph.neighbors(last_on_path)):
-
-                if len(self.search_space.nodes[current]['path']) == graph.number_of_nodes():
+                current_node = self.search_space.nodes[current]
+                if len(current_node['path']) == graph.number_of_nodes():
                     print(
-                        f"{self.search_space.nodes[current]['path']} koszt : {self.search_space.nodes[current]['cost']} odwiedzone {self.visited_states}")
-                    return
+                        f"{current_node['path']} koszt : {current_node['cost']} odwiedzone {self.visited_states}")
+                    return (current_node['path'], current_node['cost'])
 
-                if v in self.search_space.nodes[current]['path']:
+                if v in current_node['path']:
                     continue
                 self.visited_states += 1
+                if self.visited_states % 100000 == 0:  print(self.visited_states)
                 self.search_space.add_node(index)
                 new = index
                 index += 1
 
-                self.search_space.nodes[new]['path'] = self.search_space.nodes[current]['path'] + [v]
+                new_node = self.search_space.nodes[new]
+
+                new_node['path'] = current_node['path'] + [v]
                 self.search_space.add_edge(current, new,
                                            weight=graph.get_edge_data(v, last_on_path)['weight'])
 
-                self.search_space.nodes[new]['cost'] = self.search_space.nodes[current]['cost'] + \
+                new_node['cost'] = current_node['cost'] + \
                                                        graph.get_edge_data(v, last_on_path)['weight']
-                self.search_space.nodes[new]['h'] = self.heuristic(graph, self.search_space.nodes[new]['path'])
+                new_node['h'] = self.heuristic(graph, self.search_space.nodes[new]['path'])
 
-                heappush(queue, (self.search_space.nodes[new]['h'] + self.search_space.nodes[new]['cost'], new))
+                heappush(queue, (new_node['h'] + new_node['cost'], new))
 
-        net.draw_networkx(self.search_space)
-        plt.show()
