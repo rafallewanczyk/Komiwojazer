@@ -7,6 +7,7 @@ class Astar:
     search_space = net.Graph()
     final_cost = 0
     result = []
+    visited_states = 1
 
     def is_on_path(self, path, v1, v2):
         try:
@@ -41,26 +42,17 @@ class Astar:
         while len(queue) > 0:
             current = heappop(queue)[1]
 
-            print(f"biore {current}' ")
-            print(self.search_space.nodes[current]['path'])
-
             last_on_path = self.search_space.nodes[current]['path'][-1]
             for v in list(graph.neighbors(last_on_path)):
 
                 if len(self.search_space.nodes[current]['path']) == graph.number_of_nodes():
                     print(
-                        f"{self.search_space.nodes[current]['path']} koszt : {self.search_space.nodes[current]['cost']}")
-                    for i in range(1, self.search_space.number_of_nodes() + 1):
-                        print(f"{i}", end=" : ")
-                        print(self.search_space.nodes[i]['path'])
-                    net.draw_networkx(self.search_space)
-                    plt.show()
-
+                        f"{self.search_space.nodes[current]['path']} koszt : {self.search_space.nodes[current]['cost']} odwiedzone {self.visited_states}")
                     return
 
                 if v in self.search_space.nodes[current]['path']:
                     continue
-
+                self.visited_states += 1
                 self.search_space.add_node(index)
                 new = index
                 index += 1
@@ -73,14 +65,7 @@ class Astar:
                                                        graph.get_edge_data(v, last_on_path)['weight']
                 self.search_space.nodes[new]['h'] = self.heuristic(graph, self.search_space.nodes[new]['path'])
 
-                print(f"dodaje {v} ")
-                print(self.search_space.nodes[new]['path'], end=" ")
-                print(self.search_space.nodes[new]['h'] + self.search_space.nodes[new]['cost'])
                 heappush(queue, (self.search_space.nodes[new]['h'] + self.search_space.nodes[new]['cost'], new))
-            print("___________________")
 
-        for i in range(1, self.search_space.number_of_nodes() + 1):
-            print(f"{i}", end=" : ")
-            print(self.search_space.nodes[i]['path'])
         net.draw_networkx(self.search_space)
         plt.show()

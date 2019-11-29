@@ -1,5 +1,6 @@
 import networkx as net
 from data.graph_manager import GraphManager
+from data.graph_drawer import GraphDrawer
 import matplotlib.pyplot as plt
 from algorithms.brute_force import BruteForce
 from algorithms.a_star import Astar
@@ -9,6 +10,7 @@ visited = 10 * [0]
 
 def main():
     manager = GraphManager()
+    drawer = GraphDrawer()
     graph = manager.read_from_file("data/examples/poland_nodes.txt", "data/examples/poland_links.txt")
 
    # graph = net.Graph()
@@ -25,7 +27,7 @@ def main():
 
 
 
-
+    drawer.draw_with_labels(graph)
 
 
     # graph.add_edge("1test", "2test", weight = 1)
