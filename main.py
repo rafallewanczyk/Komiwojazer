@@ -1,23 +1,47 @@
-from pygraph import graph_to_dot
-from pygraph.classes.undirected_graph import UndirectedGraph
+import networkx as net
+import matplotlib.pyplot as plt
 from algorithms.brute_force import BruteForce
 from algorithms.a_star import Astar
-from algorithms.astar import *
 from heapq import *
 visited = 10 * [0]
 
 
 def main():
-    graph = UndirectedGraph()
+    graph = net.Graph()
 
-    for i in range(1, 5): graph.new_node()
-    graph.new_edge(1, 2, 2)
-    graph.new_edge(2, 3, 3)
-    graph.new_edge(1, 3, 9)
-    graph.new_edge(3, 4, 7)
-    #BruteForce().run(graph, 1)
-    Astar().generate_search_space(graph, 1)
+    for i in range(1, 5): graph.add_node(i)
+    graph.add_edge(1, 2, weight = 1)
+    graph.add_edge(1, 3, weight = 2)
+    graph.add_edge(2, 3, weight = 1)
+    graph.add_edge(2, 4, weight = 3)
+    graph.add_edge(3, 4, weight = 2)
+
+    #print(list(graph.neighbors(1)))
+   # print(graph.get_edge_data(1, 2)['weight'])
+
+
+
+
+
+
+
+    # graph.add_edge("1test", "2test", weight = 1)
+    # graph.add_edge("2test", "3test", weight = 1)
+    # graph.add_edge("3test", "4test", weight = 1)
+    # graph.add_edge("1test", "4test", weight = 100)
+
+
+    BruteForce().run(graph, 1)
+    # Astar().generate_search_space(graph, 1)
+    Astar().solve(graph, 1)
+    # net.draw_networkx(graph, pos=d)
+    # plt.show()
+    #l = sorted(list(graph.get_all_edge_objects()), key = lambda x : x['cost'])
+    #print(l[0]['vertices'][0])
+
+
     #Astar().run(graph, 1)
+
 
 
 def dfs(graph, start):

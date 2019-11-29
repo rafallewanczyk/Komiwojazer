@@ -1,57 +1,86 @@
-from pygraph import graph_to_dot
-from pygraph.classes.undirected_graph  import UndirectedGraph
+import networkx as net
+import matplotlib.pyplot as plt
 from heapq import *
+
+
 class Astar:
-   search_space = UndirectedGraph()
-   final_cost = 0
-   result = []
-   
-   def is_on_path(self, path, v1, v2):
-      if abs(path.index(v1) - path.index(v2)) == 1:
-         return 1
-      else:
-         return 0
+    search_space = net.Graph()
+    final_cost = 0
+    result = []
 
-   def heuristic(self, graph, path,  v1, v2):
-      l = sorted(list(graph.get_all_edge_objects()), key = lambda x : x['cost'])
-      for i in l:
-         if self.is_on_path(path, i['vertices'][0], i['vertices'][1]):
-            continue
-         else :
-            return l['cost'] * (graph.num_nodes() - len(path))
-      return 0
+    def is_on_path(self, path, v1, v2):
+        try:
+            if abs(path.index(v1) - path.index(v2)) == 1:
+                return 1
+            else:
+                return 0
 
-   def generate_search_space(self, graph, start):
-      id = self.search_space.new_node()
-      self.search_space.nodes[id]['data'] = {'path' : [start], 'cost' : 0}
+        except ValueError:
+            return 0
 
-      queue = []
-      #queue.append(id)
-      heappush(queue, (0, start))
+    def heuristic(self, graph, path):
+        l = sorted(graph.edges(data="weight"), key=lambda x: x[2])
+        for i in l:
+            if self.is_on_path(path, i[0], i[1]):
+                continue
+            else:
+                return i[2] * (graph.number_of_nodes() - len(path))
+        return 0
 
-      while len(queue) > 0:
-         print(queue)
+    def solve(self, graph, start):
+        index = 1
+        self.search_space.add_node(index)
+        self.search_space.nodes[index]['path'] = [start]
+        self.search_space.nodes[index]['cost'] = 0
+        self.search_space.nodes[index]['h'] = self.heuristic(graph, self.search_space.nodes[index]['path'])
 
-         id = heappop(queue)[1]
-         print(f"biore {id}' ")
-         print(self.search_space.nodes[id]['data']['path'])
-         for v in graph.neighbors(self.search_space.nodes[id]['data']['path'][-1]):
-            if v in self.search_space.nodes[id]['data']['path']:
-               continue
+        queue = []
+        heappush(queue, (self.search_space.nodes[index]['h'] + self.search_space.nodes[index]['cost'], index))
+        index += 1
 
-            if len(self.search_space.nodes[id]['data']['path']) == graph.num_nodes():
-               print(f"{self.search_space.nodes[id]['data']['path']} koszt : {self.search_space.nodes[id]['data']['cost']}")
-               return
+        while len(queue) > 0:
+            current = heappop(queue)[1]
 
-            new = self.search_space.new_node()
-            self.search_space.nodes[new]['data']['path'] = self.search_space.nodes[id]['data']['path']  + [v]
-            self.search_space.new_edge(new, id, graph.edge_cost(v, self.search_space.nodes[id]['data']['path'][-1]) + self.heuristic(graph, self.search_space.nodes[id]['data']['path'], v, self.search_space.nodes[id]['data']['path'][-1]))
-            self.search_space.nodes[new]['data']['cost'] = self.search_space.nodes[id]['data']['cost'] + graph.edge_cost(v, self.search_space.nodes[id]['data']['path'][-1])
-            print(f"dodaje {v} ")
-            print(self.search_space.nodes[new]['data']['path'])
-            heappush(queue, (self.search_space.nodes[new]['data']['cost'], new))
-         print("___________________")
-         #visited.append(queue.pop(0))
+            print(f"biore {current}' ")
+            print(self.search_space.nodes[current]['path'])
 
+            last_on_path = self.search_space.nodes[current]['path'][-1]
+            for v in list(graph.neighbors(last_on_path)):
 
-      print(graph_to_dot(self.search_space))
+                if len(self.search_space.nodes[current]['path']) == graph.number_of_nodes():
+                    print(
+                        f"{self.search_space.nodes[current]['path']} koszt : {self.search_space.nodes[current]['cost']}")
+                    for i in range(1, self.search_space.number_of_nodes() + 1):
+                        print(f"{i}", end=" : ")
+                        print(self.search_space.nodes[i]['path'])
+                    net.draw_networkx(self.search_space)
+                    plt.show()
+
+                    return
+
+                if v in self.search_space.nodes[current]['path']:
+                    continue
+
+                self.search_space.add_node(index)
+                new = index
+                index += 1
+
+                self.search_space.nodes[new]['path'] = self.search_space.nodes[current]['path'] + [v]
+                self.search_space.add_edge(current, new,
+                                           weight=graph.get_edge_data(v, last_on_path)['weight'])
+
+                self.search_space.nodes[new]['cost'] = self.search_space.nodes[current]['cost'] + \
+                                                       graph.get_edge_data(v, last_on_path)['weight']
+                self.search_space.nodes[new]['h'] = self.heuristic(graph, self.search_space.nodes[new]['path'])
+
+                print(f"dodaje {v} ")
+                print(self.search_space.nodes[new]['path'], end=" ")
+                print(self.search_space.nodes[new]['h'] + self.search_space.nodes[new]['cost'])
+                heappush(queue, (self.search_space.nodes[new]['h'] + self.search_space.nodes[new]['cost'], new))
+            print("___________________")
+
+        for i in range(1, self.search_space.number_of_nodes() + 1):
+            print(f"{i}", end=" : ")
+            print(self.search_space.nodes[i]['path'])
+        net.draw_networkx(self.search_space)
+        plt.show()
