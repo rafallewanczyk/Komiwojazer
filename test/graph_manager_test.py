@@ -1,5 +1,4 @@
 import unittest
-import networkx as nx
 from math import sqrt
 from data.graph_manager import GraphManager
 

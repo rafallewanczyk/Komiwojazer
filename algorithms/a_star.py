@@ -34,7 +34,7 @@ class Astar:
         return min * (graph.number_of_nodes() - len(path))
 
 
-    def solve(self, graph, start):
+    def solve(self, graph, start, heuristic="z"):
         self.l = sorted(graph.edges(data="weight"), key=lambda x: x[2])
         index = 1
         self.search_space.add_node(index)
@@ -73,6 +73,13 @@ class Astar:
 
                 new_node['cost'] = current_node['cost'] + \
                                    graph.get_edge_data(v, last_on_path)['weight']
-                new_node['h'] = self.greedy_heuristic(graph, self.search_space.nodes[new]['path'], v)
+                if heuristic == 'z':
+                    new_node['h'] = 0
+                elif heuristic == 'g':
+                    new_node['h'] = self.greedy_heuristic(graph, self.search_space.nodes[new]['path'], v)
+                else:
+                    new_node['h'] = self.shortes_from_all_heuristic(graph, self.search_space.nodes[new]['path'])
 
                 heappush(queue, (new_node['h'] + new_node['cost'], new))
+
+        return [], 0, self.visited_states

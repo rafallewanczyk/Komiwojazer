@@ -42,6 +42,8 @@ class GraphManager():
 
     def nodes_path_to_edges(self, path):
         edges_path = []
+        if len(path) == 0:
+            return []
         prev = path[0]
         for node in path[1:]:
             edges_path.append((prev, node))
