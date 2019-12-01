@@ -3,7 +3,7 @@ from math import sqrt
 from data.graph_manager import GraphManager
 from algorithms.brute_force import BruteForce
 
-class AstarTest(unittest.TestCase):
+class BruteForceTest(unittest.TestCase):
 
     graph_manager = GraphManager()
 
