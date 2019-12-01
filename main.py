@@ -14,7 +14,7 @@ def main():
     parser.add_argument("firstnode", type=str, help="Node where algorithms start")
     parser.add_argument("-b", "--brute", action="store_true", help="Execute brute algorithm")
     parser.add_argument("-a", "--astar", action="store_true", help="Execute astar algorithm")
-    parser.add_argument("-w", "--write", action="store_true", help="Write results to text file")
+    parser.add_argument("-w", "--write", type=str, help="Write results to text file")
     parser.add_argument("-f", "--function", help="Choice of heuristic (g - greedy, s - shortest, z - zero (default))")
     parser.add_argument("-d", "--draw", type=str, help="Draw a graph with found path (b from brute, a from astar)")
     args = parser.parse_args()
@@ -34,10 +34,10 @@ def main():
         print(f"Cost: {brute_results[1]} Visited states: {brute_results[2]}")
         print(f"Time: {total_time} s")
         print("_______________________")
-        if args.write:
-            with open("results.txt", "a") as f:
+        if args.write is not None:
+            with open(args.write, "a") as f:
                 f.write(f"Brute force:\nPath: {brute_results[0]}\n\
-                    Cost: {brute_results[1]} Visited states: {brute_results[2]}\nTime: {total_time} s")
+                    Cost: {brute_results[1]} Visited states: {brute_results[2]}\nTime: {total_time} s\n")
         if args.draw == "b":
             path = manager.nodes_path_to_edges(brute_results[0])
             drawer.draw_with_path(graph, path)
@@ -58,10 +58,10 @@ def main():
         print(f"Cost: {astar_results[1]} Visited states: {astar_results[2]}")
         print(f"Time: {total_time} s")
         print("_______________________")
-        if args.write:
-            with open("resluts.txt", "a") as f:
-                f.write(f"Astar :\nPath: {astar_results[0]}\n\
-                    Cost: {astar_results[1]} Visited states: {astar_results[2]}\nTime: {total_time} s")
+        if args.write is not None:
+            with open(args.write, "a") as f:
+                f.write(f"Astar ({args.function}):\nPath: {astar_results[0]}\n\
+                    Cost: {astar_results[1]} Visited states: {astar_results[2]}\nTime: {total_time} s\n")
         if args.draw == "a":
             path = manager.nodes_path_to_edges(astar_results[0])
             drawer.draw_with_path(graph, path)

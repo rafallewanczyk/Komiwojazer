@@ -82,4 +82,4 @@ class Astar:
 
                 heappush(queue, (new_node['h'] + new_node['cost'], new))
 
-        return [], 0, self.visited_states
+        return [], float(inf), self.visited_states

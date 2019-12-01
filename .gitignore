@@ -199,4 +199,5 @@ dmypy.json
 .vscode
 
 results.txt
+*_results.txt
 # End of https://www.gitignore.io/api/python,pycharm
